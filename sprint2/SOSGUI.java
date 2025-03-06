@@ -57,7 +57,6 @@ public class SOSGUI extends JFrame {
         boardButtons = new JButton[boardSize][boardSize];
         initBoardButtons();
 
-        // Set up bottom control panel
         JPanel bottomPanel = new JPanel();
         JPanel leftPanel = new JPanel();
         JPanel rightPanel = new JPanel();
@@ -101,7 +100,6 @@ public class SOSGUI extends JFrame {
         scoreLabel = new JLabel("Blue: 0 | Red: 0");
         bottomPanel.add(scoreLabel);
 
-        // Add panels to frame
         add(topPanel, BorderLayout.NORTH);
         add(boardPanel, BorderLayout.CENTER);
         add(leftPanel, BorderLayout.EAST);
@@ -154,7 +152,7 @@ public class SOSGUI extends JFrame {
     public void rebuildBoardUI() {
         int newSize;
         try {
-            newSize = Integer.parseInt(boardSizeField.getText().trim());
+            newSize = Integer.parseInt(boardSizeField.getText());
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(this, "Invalid board size.");
             return;
@@ -174,11 +172,11 @@ public class SOSGUI extends JFrame {
     protected void updateGame() { // Method to initialize SOSGame with a game mode
         String selectedMode = (String) gameModeComboBox.getSelectedItem();
         if (selectedMode.startsWith("Simple")) {
-            boardSize = Integer.parseInt(boardSizeField.getText().trim());
+            boardSize = Integer.parseInt(boardSizeField.getText());
             game = new SOSSimpleGame(boardSize);
             startGame();
         } else {
-            boardSize = Integer.parseInt(boardSizeField.getText().trim());
+            boardSize = Integer.parseInt(boardSizeField.getText());
             game = new SOSGeneralGame(boardSize);
             startGame();
         }
