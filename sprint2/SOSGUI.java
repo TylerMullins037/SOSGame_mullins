@@ -33,9 +33,6 @@ public class SOSGUI extends JFrame {
             "Simple Game", 
             "General Game", 
         });
-        gameModeComboBox.addActionListener(e -> {
-            restartGame();
-        });
         topPanel.add(gameModeLabel);
         topPanel.add(gameModeComboBox);
 
@@ -84,7 +81,7 @@ public class SOSGUI extends JFrame {
             redO.setBackground(Color.RED);
             redS.setBackground(null);
         });
-
+        
         leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
         rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
 
@@ -165,6 +162,10 @@ public class SOSGUI extends JFrame {
         if (newSize != boardSize) {
             boardSize = newSize;
         }
+        redS.setBackground(Color.RED);
+        blueS.setBackground(Color.BLUE);
+        redO.setBackground(null);
+        blueO.setBackground(null);
         rebuildBoardPanel();
         updateGame();
     }
