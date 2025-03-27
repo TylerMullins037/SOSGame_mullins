@@ -7,44 +7,137 @@ import java.util.Map;
 import java.util.Set;
 
 public abstract class SOSGame {
+    // Enums
     public enum Square { E, S, O }
     public enum GameMode { SIMPLE, GENERAL }
 
-    protected int n;
-    protected Square[][] board;
-	protected char blueChoice; // Players move choice S or O
-	protected char redChoice;
-    protected char turn; // Current player's turn (Red or Blue)
-    protected boolean SOSFormed = false;
-    protected GameMode gameMode; // Game mode
-    protected Map<Character, Integer> scores; 
-    protected List<int[][]> SOSCoordinates = new ArrayList<>();
+    // Private fields
+    private int n;
+    private Square[][] board;
+    private char blueChoice;
+    private char redChoice;
+    private char turn;
+    private boolean SOSFormed = false;
+    private GameMode gameMode;
+    private Map<Character, Integer> scores; 
+    private List<int[][]> SOSCoordinates = new ArrayList<>();
 
-
+    // Constructor
     public SOSGame(int n, GameMode gameMode) {
-        if (n<3) {
+        if (n < 3) {
             this.n = 8;
-        }
-        else {
+        } else {
             this.n = n;
             this.gameMode = gameMode;
-            blueChoice = 'S'; // Blue player's initial choice
-            redChoice = 'S';  // Red player's initial choice
+            blueChoice = 'S';
+            redChoice = 'S';
             board = new Square[n][n];
             turn = 'B';
-            scores = new HashMap<>(); //  Initial implementation of scores, thought not complete
+            scores = new HashMap<>();
             scores.put('B', 0);
             scores.put('R', 0);
             initSOSGame();
         }
     }
 
-    protected void initSOSGame() { // Fills the board with and makes them empty
-         for (Square[] row : board) {
+    // Board and Game State Initialization Methods
+    protected void initSOSGame() {
+        for (Square[] row : board) {
             Arrays.fill(row, Square.E);
         }
     }
 
+    public int getBoardSize() {
+        return n;
+    }
+
+    // method to check if the board is full
+    public boolean isBoardFull() {
+        for (int row = 0; row < n; row++) {
+            for (int col = 0; col < n; col++) {
+                if (board[row][col] == Square.E) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    // method to get the value of a square
+    public Square getSquare(int row, int col) {
+        if (row >= 0 && row < n && col >= 0 && col < n) {
+            return board[row][col];
+        } else {
+            return Square.E;
+        }
+    }
+
+    // method to insert a value into a square
+    public void setSquare(int row, int col, Square value) {
+        if (row >= 0 && row < n && col >= 0 && col < n) {
+            board[row][col] = value;
+        } else {
+            throw new IllegalArgumentException("Invalid board coordinates");
+        }
+    }
+
+    // Player Choice and Turn Methods
+    public void setBlue(char choice) {
+        if (choice == 'S' || choice == 'O') {
+            blueChoice = choice;
+        }
+    }
+    
+    public void setRed(char choice) {
+        if (choice == 'S' || choice == 'O') {
+            redChoice = choice;
+        }
+    }
+
+    public char getTurn() {
+        return turn;
+    }
+
+    // method to swap turns
+    public void setTurn() {
+        this.turn = (this.turn == 'R') ? 'B' : 'R';
+    }
+
+    public char getBlueChoice() {
+        return blueChoice;
+    }
+
+    public char getRedChoice() {
+        return redChoice;
+    }
+
+    // method to get the game mode
+    public GameMode getGameMode() {
+        return gameMode;
+    }
+
+    // Method to get a players score
+    public int getScore(char player) {
+        return scores.get(player);
+    }
+
+    // Method to increase a players score
+    private void updateScore(char player, int count) {
+        scores.put(turn, scores.get(player) + count);
+    }
+    
+    // Method to determine the winner
+    public char getWinner() {
+        if (getScore('B') > getScore('R')) {
+            return 'B';
+        } else if (getScore('R') > getScore('B')) {
+            return 'R';
+        } else {
+            return 'D';
+        }
+    }
+
+    // method to check all directions for all sos sequences
     protected boolean SOSCheck(int row, int col, char turn) {
         int SOSCount = 0;
         int[][] adjacencies = new int[][] {
@@ -66,12 +159,13 @@ public abstract class SOSGame {
         }
 
         if (SOSCount > 0) {
-            scores.put(turn, scores.get(turn)+(SOSCount));
+            updateScore(turn, SOSCount);
             return true;
         }
         return false;
     }
 
+    // method to check if the square is in a sequence.
     private int[][] checkAdjacent(int row, int col, int ar, int ac) {
         Square active = getSquare(row, col);
 
@@ -96,6 +190,7 @@ public abstract class SOSGame {
         return null;
     }
 
+    // This helps keep track of unique SOS sequences
     private String createSequenceKey(int[][] coordinates) {
         Arrays.sort(coordinates, (a, b) -> {
             if (a[0] != b[0]) return Integer.compare(a[0], b[0]);
@@ -104,77 +199,7 @@ public abstract class SOSGame {
         return Arrays.toString(coordinates[0]) + Arrays.toString(coordinates[1]) + Arrays.toString(coordinates[2]);
     }
 
-    protected boolean isBoardFull() { // Checks for a filled board
-        for (int row = 0; row < n; row++) {
-            for (int col = 0; col < n; col++) {
-                if (board[row][col] == Square.E) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-    
-    public int getBoardSize() { // Getter method to get board size
-        return n;
-    }
-
-    public Square getSquare(int row, int col) { // function to get the item in a square
-        if (row >= 0 && row < n && col >= 0 && col < n) {
-            return board[row][col];
-        } else {
-            return Square.E; // return EMPTY instead of null for out-of-bounds
-        }
-    }
-
-    public void setBlue(char choice) { //  Method to set Blue Player's move choice
-        if (choice == 'S' || choice == 'O') {
-            blueChoice = choice;
-        }
-    }
-
-    public void setRed(char choice) { //  Method to set Red Player's move choice
-        if (choice == 'S' || choice == 'O') {
-            redChoice = choice;
-        }
-    }
-
-    public char getTurn() { // getter method to return who's turn it is
-        return turn;
-    }
-
-    public GameMode getGameMode() {// getter method to get the current game mode
-        return gameMode;
-    }
-    
-    public void setTurn() { // function to set turn
-        this.turn = (this.turn == 'R') ? 'B' : 'R';
-    }
-
-    public boolean isValidMove(int row, int col) { // method that checks validity of move: is the game ongoing, is it in bournds, is it an empty square.
-        return !isGameEnding() && row >= 0 && row < n && col >= 0 && col < n && board[row][col] == Square.E;
-    }
-
-    public boolean getSOSFormed(){ // Function to get if the last move was an sos formation
-        return SOSFormed;
-    }
-
-    public int getScore(char player) { // Function to get the score of a player
-        return scores.get(player);
-    }
-
-    public char getWinner() {
-        if(getScore('B')>getScore('R')){
-            return 'B';
-        }
-        else if(getScore('R')>getScore('B')){
-                return 'R';
-        }
-        else {
-            return 'D';
-        }
-    }
-    
+    // This was implempented to help the gui be able draw lines when an sos is formed.
     public List<int[][]> getSOSLines(int row, int col) {
         List<int[][]> result = new ArrayList<>();
         for (int[][] coordinates : SOSCoordinates) {
@@ -187,8 +212,21 @@ public abstract class SOSGame {
         }
         return result;
     }
-    
-    public abstract boolean makeMove(int row, int col, char choice); 
 
+    // method that checks validity of a move: is the game ongoing, is it in bounds, is it an empty square.
+    public boolean isValidMove(int row, int col) {
+        return !isGameEnding() && row >= 0 && row < n && col >= 0 && col < n && board[row][col] == Square.E;
+    }
+
+    public boolean getSOSFormed() {
+        return SOSFormed;
+    }
+
+    public void setSOSFormed(boolean SOS) {
+        SOSFormed = SOS;
+    }
+    
+    // Abstract Method Implemented by its subclasses
+    public abstract boolean makeMove(int row, int col, char choice);
     public abstract boolean isGameEnding();
 }
