@@ -9,11 +9,15 @@ public class SOSGeneralGame extends SOSGame {
     @Override
     public boolean makeMove(int row, int col, char choice) { // General Game move function, which checks for SOS formations and continues turn if no SOS is formed then change turns.
         if (isValidMove(row, col)) {
-            board[row][col] = (choice == 'S') ? Square.S : Square.O;
-            if (super.SOSCheck(row,col,turn)){ 
-                SOSFormed = true;
+            if (choice == 'S') {
+                setSquare(row,col,Square.S);
+            } else{
+                setSquare(row,col,Square.O);
+            }
+            if (SOSCheck(row,col,getTurn())){ 
+                setSOSFormed(true);
             } else {
-                SOSFormed = false;
+                setSOSFormed(false);
                 if (!getSOSFormed()){
                     setTurn();
                 }
