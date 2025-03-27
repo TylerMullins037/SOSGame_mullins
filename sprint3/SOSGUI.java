@@ -20,7 +20,6 @@ public class SOSGUI extends JFrame {
     protected JComboBox<String> gameModeComboBox;
     protected boolean gameInProgress = false;
     private DrawPanel drawPanel;
-    private List<int[]> SOSLines = new ArrayList<>();
  
     public SOSGUI() {
         super("SOS"); 
@@ -246,7 +245,7 @@ public class SOSGUI extends JFrame {
                 return;
             }
             if (game.isValidMove(row, col)) {
-                char moveChoice = game.getTurn() == 'B' ? game.blueChoice : game.redChoice; 
+                char moveChoice = game.getTurn() == 'B' ? game.getBlueChoice() : game.getRedChoice(); 
 
                 boardButtons[row][col].setText(String.valueOf(moveChoice));
                 boardButtons[row][col].setFont(new Font("Arial", Font.BOLD, 24)); 
@@ -261,7 +260,7 @@ public class SOSGUI extends JFrame {
             }
         }
     }
-
+    // Class to help draw lines over the SOS Formations for more responsive UI
     private class DrawPanel extends JPanel {
         private List<LineInfo> sosLines = new ArrayList<>();
         
@@ -269,44 +268,41 @@ public class SOSGUI extends JFrame {
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
             Graphics2D g2 = (Graphics2D) g;
-            g2.setStroke(new BasicStroke(3)); // Thicker line
+            g2.setStroke(new BasicStroke(3)); 
             
             for (LineInfo lineInfo : sosLines) {
-                // Use the stored color for each line
                 g2.setColor(lineInfo.color);
                 
                 // Get the center of the first and last buttons in the SOS sequence
                 JButton startButton = boardButtons[lineInfo.line[0]][lineInfo.line[1]];
                 JButton endButton = boardButtons[lineInfo.line[2]][lineInfo.line[3]];
                 
-                // Get the absolute coordinates of the board panel
                 Point boardPanelLocation = boardPanel.getLocationOnScreen();
                 Point thisLocation = getLocationOnScreen();
                 
-                // Calculate absolute screen coordinates relative to the DrawPanel
                 int x1 = startButton.getX() + startButton.getWidth() / 2 - (boardPanelLocation.x - thisLocation.x);
                 int y1 = startButton.getY() + startButton.getHeight() / 2 - (boardPanelLocation.y - thisLocation.y);
                 int x2 = endButton.getX() + endButton.getWidth() / 2 - (boardPanelLocation.x - thisLocation.x);
                 int y2 = endButton.getY() + endButton.getHeight() / 2 - (boardPanelLocation.y - thisLocation.y);
                 
-                // Draw the line
+                // Draw the line over the SOS
                 g2.drawLine(x1, y1, x2, y2);
             }
         }
     
-        // Clear all lines
+        // clear all lines
         public void clearLines() {
             sosLines.clear();
             repaint();
         }
     
-        // Add a line with its specific color
+        // add a line with a specific color
         public void addLine(int[] line, Color color) {
             sosLines.add(new LineInfo(line, color));
             repaint();
         }
     
-        // Inner class to store line information
+        // inner class to store the lines info
         private class LineInfo {
             int[] line;
             Color color;
