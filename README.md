@@ -1,3 +1,3 @@
-# sprint2
-Sprint 2 google doc:
-https://docs.google.com/document/d/1pzF-l5J7JSnpfgKgnVFMhXKZ_gbtlfY5UDXeu1BCGK0/edit?tab=t.0  
+# sprint3
+Sprint 3 google doc:
+https://docs.google.com/document/d/1-eruAJBjnIwycn_EEBb948vczQFmv46_sljY8v9YyUQ/edit?tab=t.0 
