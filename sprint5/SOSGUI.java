@@ -43,7 +43,7 @@ public class SOSGUI extends JFrame {
     private JSlider replaySpeedSlider;
     private JComboBox<String> savedGamesComboBox;
     private JPanel replayControlPanel;
-    private SOSGameReplay gameReplay;
+    private SOSReplay gameReplay;
     private boolean inReplayMode = false;
  
     public SOSGUI() {
@@ -591,14 +591,14 @@ public class SOSGUI extends JFrame {
     private void loadSavedGames() {
         savedGamesComboBox.removeAllItems();
         
-        SOSGameRecorder recorder = new SOSGameRecorder();
-        List<SOSGameRecorder.GameRecord> games = recorder.getRecordedGames();
+        SOSRecorder recorder = new SOSRecorder();
+        List<SOSRecorder.GameRecord> games = recorder.getRecordedGames();
         
         if (games.isEmpty()) {
             savedGamesComboBox.addItem("No saved games");
             replayButton.setEnabled(false);
         } else {
-            for (SOSGameRecorder.GameRecord game : games) {
+            for (SOSRecorder.GameRecord game : games) {
                 savedGamesComboBox.addItem(game.toString());
             }
             replayButton.setEnabled(true);
@@ -615,9 +615,9 @@ public class SOSGUI extends JFrame {
         
         int gameId = Integer.parseInt(selectedGame.split("#")[1].split(" ")[0].trim());
         
-        SOSGameRecorder recorder = new SOSGameRecorder();
-        SOSGameRecorder.GameRecord gameRecord = recorder.getGameInfo(gameId);
-        List<SOSGameRecorder.MoveRecord> moves = recorder.getGameMoves(gameId);
+        SOSRecorder recorder = new SOSRecorder();
+        SOSRecorder.GameRecord gameRecord = recorder.getGameInfo(gameId);
+        List<SOSRecorder.MoveRecord> moves = recorder.getGameMoves(gameId);
         recorder.close();
         
         if (gameRecord == null || moves.isEmpty()) {
@@ -645,7 +645,7 @@ public class SOSGUI extends JFrame {
         }
         
         // Create a new game replay instance
-        gameReplay = new SOSGameReplay(gameRecord, moves, new ReplayListenerImpl());
+        gameReplay = new SOSReplay(gameRecord, moves, new ReplayListenerImpl());
         
         // Enable replay controls
         enableReplayControls(true);
@@ -729,9 +729,9 @@ public class SOSGUI extends JFrame {
         redO.setEnabled(!enable);
     }
     
-    private class ReplayListenerImpl implements SOSGameReplay.ReplayListener {
+    private class ReplayListenerImpl implements SOSReplay.ReplayListener {
         @Override
-        public void onMovePlayed(SOSGameRecorder.MoveRecord move, int currentIndex, int totalMoves) {
+        public void onMovePlayed(SOSRecorder.MoveRecord move, int currentIndex, int totalMoves) {
             SwingUtilities.invokeLater(() -> {
                 // Update the board to reflect the move
                 int row = move.getRow();

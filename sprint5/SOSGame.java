@@ -21,7 +21,7 @@ public abstract class SOSGame {
     private GameMode gameMode;
     private Map<Character, Integer> scores; 
     private List<int[][]> SOSCoordinates = new ArrayList<>();
-    private SOSGameRecorder recorder;
+    private SOSRecorder recorder;
     private int moveCount = 0;
     private boolean recordingEnabled = false;
 
@@ -232,7 +232,7 @@ public abstract class SOSGame {
 
     public void startRecording(String bluePlayerType, String redPlayerType) {
         if (recorder == null) {
-            recorder = new SOSGameRecorder();
+            recorder = new SOSRecorder();
         }
         
         int gameId = recorder.startNewGame(n, gameMode, bluePlayerType, redPlayerType);
@@ -268,9 +268,9 @@ public abstract class SOSGame {
     }
     
     // Get the recorder instance
-    public SOSGameRecorder getRecorder() {
+    public SOSRecorder getRecorder() {
         if (recorder == null) {
-            recorder = new SOSGameRecorder();
+            recorder = new SOSRecorder();
         }
         return recorder;
     }
